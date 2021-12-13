@@ -15,7 +15,7 @@
 
 #include <cyclone_bridge/ROS1Bridge.hpp>
 
-#include "cyclone_ros1_node/IntNumber.h"
+#include "cyclone_ros1_node/Msg.h"
 
 #include "ROS1NodeConfig.hpp"
 
@@ -53,7 +53,7 @@ private:
 
   ros::Publisher read_topic_pub;
 
-  void send_topic_cb(const cyclone_ros1_node::IntNumber& _msg);
+  void send_topic_cb(const cyclone_ros1_node::Msg& _msg);
 
   void read();
 
@@ -68,6 +68,8 @@ private:
   void start(Fields fields);
 
   uint32_t new_number;
+
+  std::string new_string;
 
   std::thread read_thread;
 

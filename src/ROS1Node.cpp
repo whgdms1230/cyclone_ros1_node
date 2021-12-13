@@ -46,36 +46,39 @@ void ROS1Node::start(Fields _fields)
   send_topic_sub = node->subscribe(
       ros1_node_config.ros1_to_ros2_topic, 1, &ROS1Node::send_topic_cb, this);
 
-  read_topic_pub = node->advertise<cyclone_ros1_node::IntNumber>(ros1_node_config.ros2_to_ros1_topic, 10);
+  read_topic_pub = node->advertise<cyclone_ros1_node::Msg>(ros1_node_config.ros2_to_ros1_topic, 10);
 
   read_thread = std::thread(std::bind(&ROS1Node::read_thread_fn, this));
 }
 
 void ROS1Node::send_topic_cb(
-    const cyclone_ros1_node::IntNumber& _msg)
+    const cyclone_ros1_node::Msg& _msg)
 {
-  new_number = _msg.int_num;
-
+  new_number = _msg.cnt.int_num;
+  new_string = _msg.messages.messages;
   send();
 }
 
 void ROS1Node::send()
 {
-  messages::IntNumber ros1_to_ros2_num;
-  ros1_to_ros2_num.int_num = new_number;
+  messages::Msg ros1_to_ros2_msg;
+  ros1_to_ros2_msg.cnt.int_num = new_number;
+  ros1_to_ros2_msg.messages.messages = new_string;
 
-  fields.ros1_bridge->send(ros1_to_ros2_num);
+  fields.ros1_bridge->send(ros1_to_ros2_msg);
 }
 
 void ROS1Node::read()
 {
-  messages::IntNumber ros2_to_ros1_num;
-  if (fields.ros1_bridge->read(ros2_to_ros1_num))
+  messages::Msg ros2_to_ros1_msg;
+  if (fields.ros1_bridge->read(ros2_to_ros1_msg))
   {
-    cyclone_ros1_node::IntNumber new_num;
-    new_num.int_num = ros2_to_ros1_num.int_num;
+    cyclone_ros1_node::Msg new_msg;
 
-    read_topic_pub.publish(new_num);
+    new_msg.cnt.int_num = ros2_to_ros1_msg.cnt.int_num;
+    new_msg.messages.messages = ros2_to_ros1_msg.messages.messages;
+
+    read_topic_pub.publish(new_msg);
   }
 }
 

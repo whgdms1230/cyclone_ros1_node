@@ -27,6 +27,8 @@ find_package(catkin QUIET COMPONENTS
 add_message_files(
   FILES
   IntNumber.msg
+  StrString.msg
+  Msg.msg
 )
 
 generate_messages(
