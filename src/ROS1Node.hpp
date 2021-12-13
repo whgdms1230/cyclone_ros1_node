@@ -15,11 +15,7 @@
 
 #include <cyclone_bridge/ROS1Bridge.hpp>
 
-// #include "cyclone_ros1_node/Operator.h"
-#include "cyclone_ros1_node/Request.h"
-#include "cyclone_ros1_node/Response.h"
-#include "cyclone_ros1_node/Result.h"
-#include "cyclone_ros1_node/Variable.h"
+#include "cyclone_ros1_node/IntNumber.h"
 
 #include "ROS1NodeConfig.hpp"
 
@@ -47,23 +43,21 @@ public:
 
   };
 
-  void print_config();
-
 private:
+
+  std::unique_ptr<ros::Rate> read_rate;
 
   std::unique_ptr<ros::NodeHandle> node;
 
-  std::unique_ptr<ros::Rate> update_rate;
+  ros::Subscriber send_topic_sub;
 
-  std::unique_ptr<ros::Rate> publish_rate;
+  ros::Publisher read_topic_pub;
 
-  ros::Subscriber request_sub;
+  void send_topic_cb(const cyclone_ros1_node::IntNumber& _msg);
 
-  void request_callback_fn(const cyclone_ros1_node::Request& _msg);
+  void read();
 
-  bool read_response();
-
-  void send_request();
+  void send();
 
   ROS1NodeConfig ros1_node_config;
 
@@ -73,8 +67,11 @@ private:
 
   void start(Fields fields);
 
-  std::string problem_name;
+  uint32_t new_number;
 
+  std::thread read_thread;
+
+  void read_thread_fn();
 };
 
 } // namespace ros1

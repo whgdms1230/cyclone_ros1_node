@@ -30,42 +30,64 @@ ROS1Node::ROS1Node(const ROS1NodeConfig& _config) :
 {}
 
 ROS1Node::~ROS1Node()
-{}
+{
+  if (read_thread.joinable())
+  {
+    read_thread.join();
+  }
+}
 
 void ROS1Node::start(Fields _fields)
 {
   fields = std::move(_fields);
+
+  read_rate.reset(new ros::Rate(ros1_node_config.read_frequency));
+
+  send_topic_sub = node->subscribe(
+      ros1_node_config.ros1_to_ros2_topic, 1, &ROS1Node::send_topic_cb, this);
+
+  read_topic_pub = node->advertise<cyclone_ros1_node::IntNumber>(ros1_node_config.ros2_to_ros1_topic, 10);
+
+  read_thread = std::thread(std::bind(&ROS1Node::read_thread_fn, this));
 }
 
-void ROS1Node::print_config()
+void ROS1Node::send_topic_cb(
+    const cyclone_ros1_node::IntNumber& _msg)
 {
-  ros1_node_config.print_config();
+  new_number = _msg.int_num;
+
+  send();
 }
 
-void ROS1Node::request_callback_fn(
-    const cyclone_ros1_node::Request& _msg)
+void ROS1Node::send()
 {
-  problem_name = _msg.name;
+  messages::IntNumber ros1_to_ros2_num;
+  ros1_to_ros2_num.int_num = new_number;
 
-  send_request();
+  fields.ros1_bridge->send(ros1_to_ros2_num);
 }
 
-void ROS1Node::send_request()
+void ROS1Node::read()
 {
-  messages::Request new_request;
-  new_request.name = problem_name;
-
-  fields.ros1_bridge->send_request(new_request);
-}
-
-bool ROS1Node::read_response()
-{
-  messages::Response new_response;
-  if (fields.ros1_bridge->read_response(new_response))
+  messages::IntNumber ros2_to_ros1_num;
+  if (fields.ros1_bridge->read(ros2_to_ros1_num))
   {
-    return true;
+    cyclone_ros1_node::IntNumber new_num;
+    new_num.int_num = ros2_to_ros1_num.int_num;
+
+    read_topic_pub.publish(new_num);
   }
-  return false;
+}
+
+void ROS1Node::read_thread_fn()
+{
+  while (node->ok())
+  {
+    read_rate->sleep();
+    
+    // read message from DDS
+    read();
+  }
 }
 
 } // namespace ros1

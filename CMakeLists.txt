@@ -26,11 +26,7 @@ find_package(catkin QUIET COMPONENTS
 
 add_message_files(
   FILES
-  Operator.msg
-  Request.msg
-  Response.msg
-  Result.msg
-  Variable.msg
+  IntNumber.msg
 )
 
 generate_messages(
@@ -61,6 +57,12 @@ if (catkin_FOUND)
       ${catkin_INCLUDE_DIRS}
   )
 
+  install(
+    TARGETS
+      cyclone_ros1_node
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+  
   install(
     DIRECTORY launch
     DESTINATION share/${PROJECT_NAME}

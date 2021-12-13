@@ -17,5 +17,8 @@ int main(int argc, char** argv)
     ROS_ERROR("cyclone_ros1_node: unable to initialize.");
     return 1;
   }
+
+  ros::spin();
+  
   return 0;
 }

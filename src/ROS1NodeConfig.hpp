@@ -15,27 +15,15 @@ namespace ros1
 
 struct ROS1NodeConfig
 {
-  std::string request_topic = "/request";
-  std::string response_topic = "/response";
+  std::string ros1_to_ros2_topic = "/ros1_to_ros2_topic";
+  std::string ros2_to_ros1_topic = "/ros2_to_ros1_topic";
 
   int dds_domain = 100;
 
-  std::string dds_request_topic = "request";
-  std::string dds_response_topic = "response";
-
-  void get_param_if_available(
-      const ros::NodeHandle& node, const std::string& key, 
-      std::string& param_out);
-
-  void get_param_if_available(
-      const ros::NodeHandle& node, const std::string& key,
-      int& param_out);
-
-  void get_param_if_available(
-      const ros::NodeHandle& node, const std::string& key,
-      double& param_out);
-      
-  void print_config() const;
+  std::string dds_ros1_to_ros2_topic = "ros1_to_ros2";
+  std::string dds_ros2_to_ros1_topic = "ros2_to_ros1";
+  
+  double read_frequency = 10.0;
 
   ROS1Config get_ros1_config() const;
 

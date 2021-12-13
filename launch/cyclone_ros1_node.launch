@@ -1,0 +1,5 @@
+<launch>
+
+  <node name="cyclone_ros1_node" pkg="cyclone_ros1_node" type="cyclone_ros1_node" output="screen"/>
+
+</launch>
