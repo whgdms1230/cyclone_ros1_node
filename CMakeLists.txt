@@ -58,6 +58,12 @@ if (catkin_FOUND)
   )
 
   install(
+    TARGETS
+      cyclone_ros1_node
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+  
+  install(
     DIRECTORY launch
     DESTINATION share/${PROJECT_NAME}
   )

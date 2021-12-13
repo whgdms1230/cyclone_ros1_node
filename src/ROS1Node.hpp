@@ -15,7 +15,6 @@
 
 #include <cyclone_bridge/ROS1Bridge.hpp>
 
-// #include "cyclone_ros1_node/Operator.h"
 #include "cyclone_ros1_node/IntNumber.h"
 
 #include "ROS1NodeConfig.hpp"
@@ -46,6 +45,8 @@ public:
 
 private:
 
+  std::unique_ptr<ros::Rate> read_rate;
+
   std::unique_ptr<ros::NodeHandle> node;
 
   ros::Subscriber send_topic_sub;
@@ -68,6 +69,9 @@ private:
 
   uint32_t new_number;
 
+  std::thread read_thread;
+
+  void read_thread_fn();
 };
 
 } // namespace ros1

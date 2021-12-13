@@ -22,7 +22,9 @@ struct ROS1NodeConfig
 
   std::string dds_ros1_to_ros2_topic = "ros1_to_ros2";
   std::string dds_ros2_to_ros1_topic = "ros2_to_ros1";
-      
+  
+  double read_frequency = 10.0;
+
   ROS1Config get_ros1_config() const;
 
   static ROS1NodeConfig make();

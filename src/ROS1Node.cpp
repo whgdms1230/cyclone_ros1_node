@@ -30,16 +30,25 @@ ROS1Node::ROS1Node(const ROS1NodeConfig& _config) :
 {}
 
 ROS1Node::~ROS1Node()
-{}
+{
+  if (read_thread.joinable())
+  {
+    read_thread.join();
+  }
+}
 
 void ROS1Node::start(Fields _fields)
 {
   fields = std::move(_fields);
 
+  read_rate.reset(new ros::Rate(ros1_node_config.read_frequency));
+
   send_topic_sub = node->subscribe(
       ros1_node_config.ros1_to_ros2_topic, 1, &ROS1Node::send_topic_cb, this);
 
   read_topic_pub = node->advertise<cyclone_ros1_node::IntNumber>(ros1_node_config.ros2_to_ros1_topic, 10);
+
+  read_thread = std::thread(std::bind(&ROS1Node::read_thread_fn, this));
 }
 
 void ROS1Node::send_topic_cb(
@@ -67,6 +76,17 @@ void ROS1Node::read()
     new_num.int_num = ros2_to_ros1_num.int_num;
 
     read_topic_pub.publish(new_num);
+  }
+}
+
+void ROS1Node::read_thread_fn()
+{
+  while (node->ok())
+  {
+    read_rate->sleep();
+    
+    // read message from DDS
+    read();
   }
 }
 
