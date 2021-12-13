@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cyclone_ros1_node</name>
+  <version>1.0.0</version>
+  <description>ROS 1.0 / 2.0 Message Bridge using CycloneDDS</description>
+  <maintainer email="whgdms1230@naver.com">PaulKim</maintainer>
+  <license>Apache 2.0</license>
+  <author email="whgdms1230@naver.com">PaulKim</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+
+  <depend>cyclone_bridge</depend>
+</package>

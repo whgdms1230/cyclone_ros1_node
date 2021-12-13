@@ -1,0 +1,2 @@
+IntNumber cnt
+StrString messages
